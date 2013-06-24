@@ -11,29 +11,22 @@
 #include "World.h"
 #include "quat.h"
 #include "Vector3.h"
+#include "Camera.h"
 
 using namespace std;
 
 const int SIZE = 6; //EVEN NUMBER
 
 World *world;
+Camera *cam;
 
-Vector3 cameraPos(0, 0, -5);
-Quaternion cameraQuaternion;;
-
-
-const float pi = 3.14;
-
-int Mouse[2] = {0, 0};
-bool MousePressed = false;
 
 //Initializes 3D rendering
 void initializeRendering()
 {
     glfwInit();
-
+    cam = new Camera(); //add what type
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    cameraQuaternion = 	(Quaternion().FromAxis(pi/4, 0, 1, 0) * Quaternion().FromAxis(pi/4, 1, 0, 0)) * cameraQuaternion;
 }
 
 //Called when a key is pressed
@@ -42,15 +35,6 @@ void GLFWCALL handleKeypress(int key,int press) //The key that was pressed
 	switch (key) {
 		case GLFW_KEY_ESC: //Escape key
 			exit(0); //Exit the program
-	}
-}
-
-//Called when a mouse is pressed
-void GLFWCALL handleMousepress(int key,int press) //The key that was pressed
-{
-	switch (key) {
-		case GLFW_MOUSE_BUTTON_MIDDLE: //Middle mouse
-			MousePressed = press;
 	}
 }
 
@@ -113,15 +97,6 @@ void DrawXYZLines()
 	glDisable ( GL_COLOR_MATERIAL ) ;
 }
 
-void mouseMoved(float dx, float dy) {
-    float sensitivity = 0.01f;
-
-    cameraQuaternion =		(Quaternion().FromAxis(-dx*sensitivity, 0, 1, 0) *
-    						cameraQuaternion)
-    						* Quaternion().FromAxis(-dy*sensitivity, 1, 0, 0);
-}
-
-
 void display()
 {
     glClearColor( 0.0f, 0.0f, 0.0f, 0.0f ); //clear background screen to black
@@ -132,23 +107,7 @@ void display()
     glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
 
-	cameraPos.setZ(-5.0+(double)glfwGetMouseWheel());
-
-	//update mouse pos
-	int diff[2] = {Mouse[0], Mouse[1]};
-	glfwGetMousePos(&Mouse[0], &Mouse[1]);
-	diff[0] -= Mouse[0];
-	diff[1] -= Mouse[1];
-
-	glTranslatef(cameraPos.getX(),cameraPos.getY(),cameraPos.getZ());
-	if(MousePressed)
-	{
-		mouseMoved(diff[0], diff[1]);
-	}
-
-	float RotationMatrix[16];
-	cameraQuaternion.ToMatrix16(RotationMatrix);
-	glMultMatrixf(RotationMatrix);
+	cam->tick();
 
 	DrawGrid();
 	world->drawWorld();
@@ -185,7 +144,6 @@ int main()
     glfwSetWindowTitle("codeincodeblock.blogspot.com - basic shape");
     glfwSetWindowSizeCallback(handleResize); //callback function of GLFW to handle window resize
     glfwSetKeyCallback(handleKeypress); //callback function to handle keypress
-    glfwSetMouseButtonCallback(handleMousepress);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

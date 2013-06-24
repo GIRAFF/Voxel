@@ -109,6 +109,11 @@ const Quaternion& Quaternion::Normalize()
 	} 
   return *this; 
 } 
+
+const Quaternion& Quaternion::FromAxis(Vector3 vec, const float Angle)
+{
+	return FromAxis(Angle, vec.getX(), vec.getY(), vec.getZ());
+}
  
 const Quaternion& Quaternion::FromAxis(const float Angle, float x, float y, float z) 
 { 

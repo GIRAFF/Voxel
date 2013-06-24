@@ -14,6 +14,7 @@
 #define BA_QUATERNION_H__ 
  
 #include <iostream>
+#include "Vector3.h"
  
 using namespace std;
 
@@ -47,7 +48,9 @@ class Quaternion
  
     // this normalizes a quaternion  
     const Quaternion& Normalize(); 
-    const Quaternion& FromAxis(const float, float, float, float); 
+    const Quaternion& FromAxis(const float, float, float, float);
+    const Quaternion& FromAxis(Vector3 vec, const float Angle);
+
     void ToMatrix(float matrix[3][3]) const; 
     void ToMatrix16(float matrix[16]) const; 
  
