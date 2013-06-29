@@ -15,7 +15,7 @@
 
 using namespace std;
 
-const int SIZE = 6; //EVEN NUMBER
+const int GRIDSIZE = 6; //EVEN NUMBER
 
 World *world;
 Camera *cam;
@@ -25,8 +25,23 @@ Camera *cam;
 void initializeRendering()
 {
     glfwInit();
+
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[] = { 50.0 };
+    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+    glClearColor (0.0, 0.0, 0.0, 0.0);
+    glShadeModel (GL_SMOOTH);
+
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+
     cam = new Camera(); //add what type
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+
 }
 
 //Called when a key is pressed
@@ -58,15 +73,15 @@ void GLFWCALL handleResize(int width,int height)
 void DrawGrid()
 {
 	glEnable ( GL_COLOR_MATERIAL ) ;
-	for(int lines = 0; lines <=SIZE; ++lines){
+	for(int lines = 0; lines <=GRIDSIZE; ++lines){
 		glBegin(GL_LINES);
 
 			glColor3f(0.6f,0.6f,0.6f);
-			glVertex3f(-SIZE/2, 0, lines-(SIZE/2));
-			glVertex3f(SIZE/2, 0, lines-(SIZE/2));
+			glVertex3f(-GRIDSIZE/2, 0, lines-(GRIDSIZE/2));
+			glVertex3f(GRIDSIZE/2, 0, lines-(GRIDSIZE/2));
 
-			glVertex3f(lines-(SIZE/2), 0, -SIZE/2);
-			glVertex3f(lines-(SIZE/2), 0, SIZE/2);
+			glVertex3f(lines-(GRIDSIZE/2), 0, -GRIDSIZE/2);
+			glVertex3f(lines-(GRIDSIZE/2), 0, GRIDSIZE/2);
 
 		glEnd();
 	}
@@ -109,8 +124,8 @@ void display()
 
 	cam->tick();
 
-	DrawGrid();
 	world->drawWorld();
+	DrawGrid();
 	DrawXYZLines();
 
     glfwSwapBuffers();
@@ -141,14 +156,13 @@ int main()
         return 0;
     }
 
-    glfwSetWindowTitle("codeincodeblock.blogspot.com - basic shape");
+    glfwSetWindowTitle("Voxel Test by Robin Reicher");
     glfwSetWindowSizeCallback(handleResize); //callback function of GLFW to handle window resize
     glfwSetKeyCallback(handleKeypress); //callback function to handle keypress
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    //glDepthFunc(GL_LESS);
 
-    world = new World(SIZE, SIZE, SIZE);
+    world = new World();
 	world->generateWorld();
 
     while(running) // infinite loop to draw object again and again

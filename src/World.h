@@ -2,11 +2,15 @@
 
 #include "Voxel.h"
 
+const int WIDTH = 6;
+const int HEIGHT =6;
+const int DEPTH = 6;
+
 class World
 {
 public:
 
-	World(int width, int height, int depth);
+	World();
 
 	void generateWorld();
 	void drawWorld();
@@ -18,9 +22,5 @@ public:
 
 private:
 
-	int m_width;
-	int m_height;
-	int m_depth;
-
-	Voxel **m_voxels;
+	Voxel *m_voxels[WIDTH][HEIGHT][DEPTH];
 };

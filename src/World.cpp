@@ -1,46 +1,51 @@
 #include "World.h"
 
-World::World(int width, int height, int depth)
-: m_width(width)
-, m_height(height)
-, m_depth(depth)
-, m_voxels(new Voxel*[width*height*depth])
+World::World()
 {
-	for(long v = 0; v < width*height*depth; ++v)
-		m_voxels[v] = NULL;
 };
 
 void World::generateWorld()
 {
-	setVoxel(0, 0, 0);
+	for(int x = 0; x < WIDTH; ++x){
+		for(int y = 0; y < HEIGHT; ++y){
+			for(int z = 0; z < DEPTH; ++z){
+				m_voxels[x][y][z] = NULL;
+
+				if(y == HEIGHT/2)
+					setVoxel( x, y, z);
+			}
+		}
+	}
+
 }
 
 void World::drawWorld()
 {
-	for(int x = 0; x <m_width; ++x)
+	glTranslatef(-WIDTH/2.0f + 0.5f, -HEIGHT/2.0f - 0.51f, -DEPTH/2.0f + 0.5f);
+	for(int x = 0; x < WIDTH; ++x)
 	{
-		for(int y = 0; y <m_height; ++y)
+		for(int y = 0; y < HEIGHT; ++y)
 		{
-			for(int z = 0; z <m_depth; ++z)
+			for(int z = 0; z < DEPTH; ++z)
 			{
 				if(!isEmptySpace(x, y, z))
 				{
-					glTranslatef ((double)x,(double) y, (double)z);
 					getVoxel(x, y, z)->draw();
 				}
 			}
 		}
 	}
+	glTranslatef(WIDTH/2.0f - 0.5f, HEIGHT/2.0f + 0.5f, DEPTH/2.0f - 0.5f);
 }
 void World::setVoxel(int x, int y, int z)
 {
-	//Simplification of x + y * WIDTH + z * WIDTH * DEPTH
-	m_voxels[x + m_width * (y + m_depth * z)] = new Voxel();
+	Vector3 pos(x, y, z);
+	m_voxels[x][y][z]= new Voxel(Bedrock, pos);
 }
 
 Voxel *World::getVoxel(int x, int y, int z) const
 {
-	return m_voxels[x + m_width * (y + m_depth * z)];
+	return m_voxels[x][y][z];
 }
 
 bool World::isEmptySpace(int x, int y, int z) const

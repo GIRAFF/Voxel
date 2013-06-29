@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL/glfw.h>
+#include "Vector3.h"
 
 enum Material{
 	Bedrock, Dirt
@@ -9,10 +10,11 @@ enum Material{
 class Voxel
 {
 public:
-	Voxel(Material material) ;
+	Voxel(Material material, Vector3 pos) ;
 	Voxel();
 	void draw() const;
 
 private:
 	Material m_material;
+	Vector3 m_pos;
 };
