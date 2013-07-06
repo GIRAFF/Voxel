@@ -2,9 +2,9 @@
 
 #include "Voxel.h"
 
-const int WIDTH = 6;
-const int HEIGHT =6;
-const int DEPTH = 6;
+const int WIDTH = 10;
+const int HEIGHT = 7;
+const int DEPTH = 10;
 
 class World
 {
@@ -15,12 +15,17 @@ public:
 	void generateWorld();
 	void drawWorld();
 
-	void setVoxel(int x, int y, int z);
+private:
+
+	void setVoxel(int x, int y, int z, Material mat);
 	Voxel *getVoxel(int x, int y, int z) const;
+	void removeVoxel(int x, int y, int z);
 
 	bool isEmptySpace(int x, int y, int z) const;
 
-private:
+	void collapseWorld();
+	unsigned int emptySpaceUnder(int x, int y, int z) const;
+	unsigned int numberOfConnections(Voxel* voxel) const;
 
 	Voxel *m_voxels[WIDTH][HEIGHT][DEPTH];
 };

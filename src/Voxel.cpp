@@ -15,6 +15,31 @@ Voxel::Voxel(Material material, Vector3 pos)
 
 }
 
+void Voxel::setMaterial() const
+{
+	switch(m_material)
+	{
+		case Bedrock:
+		{
+			GLfloat cube_bedrock[] = { 0.2, 0.2, 0.2, 1.0 };
+			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_bedrock);
+			break;
+		}
+		case Stone:
+		{
+			GLfloat cube_bedrock[] = { 0.5, 0.5, 0.5, 1.0 };
+			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_bedrock);
+			break;
+		}
+		case Dirt:
+		{
+			GLfloat cube_dirt[] = { 0.6, 0.8, 0.1, 1.0 };
+			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_dirt);
+			break;
+		}
+	}
+}
+
 void Voxel::draw() const
 {
 	// vertex coords array
@@ -32,14 +57,6 @@ void Voxel::draw() const
 	                     -1,0,0,  -1,0,0, -1,0,0,  -1,0,0,          // v1-v6-v7-v2
 	                     0,-1,0,  0,-1,0,  0,-1,0,  0,-1,0,         // v7-v4-v3-v2
 	                     0,0,-1,  0,0,-1,  0,0,-1,  0,0,-1};        // v4-v7-v6-v5
-
-	// color array
-	GLfloat colors[] = {1,1,1,  1,1,0,  1,0,0,  1,0,1,              // v0-v1-v2-v3
-	                    1,1,1,  1,0,1,  0,0,1,  0,1,1,              // v0-v3-v4-v5
-	                    1,1,1,  0,1,1,  0,1,0,  1,1,0,              // v0-v5-v6-v1
-	                    1,1,0,  0,1,0,  0,0,0,  1,0,0,              // v1-v6-v7-v2
-	                    0,0,0,  0,0,1,  1,0,1,  1,0,0,              // v7-v4-v3-v2
-	                    0,0,1,  0,0,0,  0,1,0,  0,1,1};             // v4-v7-v6-v5
 
 	// index array of vertex array for glDrawElements()
 	// Notice the indices are listed straight from beginning to end as exactly
@@ -68,12 +85,16 @@ void Voxel::draw() const
 
 	glPushMatrix();
 
-	GLfloat cube_diffuse[] = { 0.3, 0.7, 0.1, 1.0 };
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_diffuse);
+	setMaterial();
 
 	glTranslatef(pX, pY, pZ); //move to position
 	glDrawElements(GL_QUADS, 24, GL_UNSIGNED_BYTE, indices);
 
+	/*GLfloat cube_dirt[] = { 0.0, 0.0, 0.0, 1.0 };
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_dirt);
+
+	glDrawElements(GL_LINES, 24, GL_UNSIGNED_BYTE, indices);
+*/
 	glPopMatrix();
 
 	glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays

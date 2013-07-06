@@ -26,15 +26,10 @@ void initializeRendering()
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glShadeModel(GL_SMOOTH);
 
-    GLfloat model_ambient[4] = {0.1f, 0.1f, 0.1f, 1.0f};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);  //Background light
-
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
-
-	//glEnable ( GL_COLOR_MATERIAL ) ;
 
     cam = new Camera(); //add what type
 }
@@ -124,7 +119,6 @@ void display()
     glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
 
-
     GLfloat light_position[] = { 2.0, 2.0, 2.0, 0.0 };
 
 	cam->tick();
@@ -132,7 +126,7 @@ void display()
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	world->drawWorld();
-	DrawGrid();
+	//DrawGrid();
 	DrawXYZLines();
 
 
