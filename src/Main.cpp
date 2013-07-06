@@ -7,7 +7,6 @@
 #include <iostream>
 #include <math.h>
 
-#include "Voxel.h"
 #include "World.h"
 #include "quat.h"
 #include "Vector3.h"
@@ -24,24 +23,20 @@ Camera *cam;
 //Initializes 3D rendering
 void initializeRendering()
 {
-    glfwInit();
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glShadeModel(GL_SMOOTH);
 
-    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat mat_shininess[] = { 50.0 };
-    GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-    glClearColor (0.0, 0.0, 0.0, 0.0);
-    glShadeModel (GL_SMOOTH);
-
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    GLfloat model_ambient[4] = {0.1f, 0.1f, 0.1f, 1.0f};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);  //Background light
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
+
+	//glEnable ( GL_COLOR_MATERIAL ) ;
 
     cam = new Camera(); //add what type
-
 }
 
 //Called when a key is pressed
@@ -72,95 +67,97 @@ void GLFWCALL handleResize(int width,int height)
 
 void DrawGrid()
 {
-	glEnable ( GL_COLOR_MATERIAL ) ;
+	GLfloat cube_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_diffuse);
+
 	for(int lines = 0; lines <=GRIDSIZE; ++lines){
 		glBegin(GL_LINES);
+			glVertex3f(-GRIDSIZE/2, 0.01, lines-(GRIDSIZE/2));
+			glVertex3f(GRIDSIZE/2, 0.01, lines-(GRIDSIZE/2));
 
-			glColor3f(0.6f,0.6f,0.6f);
-			glVertex3f(-GRIDSIZE/2, 0, lines-(GRIDSIZE/2));
-			glVertex3f(GRIDSIZE/2, 0, lines-(GRIDSIZE/2));
-
-			glVertex3f(lines-(GRIDSIZE/2), 0, -GRIDSIZE/2);
-			glVertex3f(lines-(GRIDSIZE/2), 0, GRIDSIZE/2);
+			glVertex3f(lines-(GRIDSIZE/2), 0.1, -GRIDSIZE/2);
+			glVertex3f(lines-(GRIDSIZE/2), 0.1, GRIDSIZE/2);
 
 		glEnd();
 	}
-	glDisable ( GL_COLOR_MATERIAL ) ;
 }
 
 void DrawXYZLines()
 {
-	glEnable ( GL_COLOR_MATERIAL ) ;
+	GLfloat cube_diffuseRed[] = { 1.0, 0.0, 0.0, 1.0 };
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_diffuseRed);
+
 	glBegin(GL_LINES);
 		glColor3f(1.0f,0.0,0.0);
-		glVertex3f(0, 0, 0);
-		glVertex3f(1, 0, 0);
+		glVertex3f(0, 0.01, 0);
+		glVertex3f(1, 0.01, 0);
 	glEnd();
+
+	GLfloat cube_diffuseGreen[] = { 0.0, 1.0, 0.0, 1.0};
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_diffuseGreen);
+
 
 	glBegin(GL_LINES);
 		glColor3f(0.0f,1.0,0.0);
-		glVertex3f(0, 0, 0);
+		glVertex3f(0, 0.01, 0);
 		glVertex3f(0, 1, 0);
 	glEnd();
 
+	GLfloat cube_diffuseBlue[] = { 0.0, 0.0, 1.0, 1.0 };
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cube_diffuseBlue);
+
 	glBegin(GL_LINES);
 		glColor3f(0.0f,0.0,1.0);
-		glVertex3f(0, 0, 0);
-		glVertex3f(0, 0, 1);
+		glVertex3f(0, 0.01, 0);
+		glVertex3f(0, 0.01, 1);
 	glEnd();
 
-	glDisable ( GL_COLOR_MATERIAL ) ;
 }
 
 void display()
 {
-    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f ); //clear background screen to black
-
     //Clear information from last draw
-    glClear( GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+	glClearColor (0.53 , 0.81, 0.99, 1.0);
+    glClearDepth(100.0);            // set depth buffer to the most distant value
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
 
+
+    GLfloat light_position[] = { 2.0, 2.0, 2.0, 0.0 };
+
 	cam->tick();
+
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	world->drawWorld();
 	DrawGrid();
 	DrawXYZLines();
 
+
     glfwSwapBuffers();
 
 }
+
 int main()
 {
-   // int     width, height;
-    //int     frame = 0;
+	glfwInit();
     bool    running = true;
 
-    initializeRendering();
 
 
-
-    if( !glfwOpenWindow( 512, // width of window
-                         512, //height of window
-                          1,  //redbits
-                          0,  //greenbits
-                          0,  //bluebits
-                          0,  //alphabits
-                          0,  //depthbits
-                          0, //stencilbits
-                          GLFW_WINDOW ) //mode
-        ) //return false if window is not created
+    if( !glfwOpenWindow(500, 500, 8, 8, 8, 8, 24, 8, GLFW_WINDOW))
     {
         glfwTerminate(); //terminating glfw window
         return 0;
     }
 
+    initializeRendering();
+
     glfwSetWindowTitle("Voxel Test by Robin Reicher");
     glfwSetWindowSizeCallback(handleResize); //callback function of GLFW to handle window resize
     glfwSetKeyCallback(handleKeypress); //callback function to handle keypress
-
-    //glDepthFunc(GL_LESS);
 
     world = new World();
 	world->generateWorld();

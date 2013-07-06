@@ -3,6 +3,7 @@
 #include <GL/glfw.h>
 #include "Vector3.h"
 
+
 enum Material{
 	Bedrock, Dirt
 };

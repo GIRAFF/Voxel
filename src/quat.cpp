@@ -118,7 +118,6 @@ const Quaternion& Quaternion::FromAxis(Vector3 vec, const float Angle)
 const Quaternion& Quaternion::FromAxis(const float Angle, float x, float y, float z) 
 { 
   float omega, s, c; 
-  int i; 
      
   s = sqrt(x*x + y*y + z*z); 
    
@@ -191,7 +190,6 @@ void Quaternion::ToMatrix16(float matrix[16]) const
 void Quaternion::Slerp(const Quaternion &a,const Quaternion &b, const float t) 
 { 
   float omega, cosom, sinom, sclp, sclq; 
-  int i; 
  
  
   cosom = a.X*b.X + a.Y*b.Y + a.Z*b.Z + a.W*b.W; 
