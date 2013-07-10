@@ -12,6 +12,8 @@
 #include "Vector3.h"
 #include "Camera.h"
 
+#include "Helpers.h"
+
 using namespace std;
 
 const int GRIDSIZE = 6; //EVEN NUMBER
@@ -128,6 +130,8 @@ void display()
 	world->drawWorld();
 	//DrawGrid();
 	DrawXYZLines();
+
+	calcFPS(1.0, "Current FPS: ");
 
 
     glfwSwapBuffers();

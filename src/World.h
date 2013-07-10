@@ -2,9 +2,9 @@
 
 #include "Voxel.h"
 
-const int WIDTH = 10;
+const int WIDTH = 20;
 const int HEIGHT = 7;
-const int DEPTH = 10;
+const int DEPTH = 20;
 
 class World
 {
